@@ -5,12 +5,12 @@ const { body, validationResult } = require('express-validator');
 
 // Sign up GET //
 router.get('/', asyncHandler(async (req, res, next) => {
-  res.render('signup', { title: 'Members Only' });
+  res.render('login', { title: 'Members Only' });
 }));
 
 // Sign up POST //
 router.post('/', asyncHandler(async (req, res, next) => {
-  res.send("SIGNUP: not yet implemented")
+  res.send("LOGIN: not yet implemented")
 }));
 
 module.exports = router;
