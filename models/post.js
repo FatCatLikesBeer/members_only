@@ -17,5 +17,11 @@ const PostSchema = new Schema({
   downVotes: { type: Integer, default: 0 },
 });
 
+// Virtual for Posts's URL
+PostSchema.virtual("url").get(function() {
+  // We don't use an arrow function as we'll need the 'this' object
+  return `/post/${this._id}`;
+});
+
 // Export model
 module.exports = mongoose.model("Post", PostSchema);
