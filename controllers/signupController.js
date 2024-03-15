@@ -10,14 +10,15 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 
 // Passport.js local login 'strategy' //
+// I'm not sure how this is working sitewide but whatever //
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
       const user = await User.findOne({ username: username });
-      const match = await bcrypt.compare(password, user.password);
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       };
+      const match = await bcrypt.compare(password, user.password);
       if (!match) {
         return done(null, false, { message: "Incorrect password" });
       };
@@ -44,7 +45,14 @@ passport.deserializeUser(async (id, done) => {
 
 // Sign up GET //
 exports.signup_get = (req, res, next) => {
-  res.render('signup', { title: "Members Only" });
+  if (req.isAuthenticated()) {
+    res.redirect('/');
+  } else {
+    res.render('signup', {
+      title: 'Members Only',
+      user: req.user,
+    });
+  }
 };
 
 // Sign up POST //

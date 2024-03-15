@@ -55,8 +55,15 @@ app.post('/', passport.authenticate("local", {
 app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
-app.get('/test', (req, res) => {
+app.get('/fail', (req, res) => {
+  res.render('fail', {
+    title: "Members Only",
+    user: req.user,
+  });
+});
+app.get('/test', (req, res, next) => {
   console.log(req);
+  res.send("Check the console.");
 });
 app.post('/log-in', passport.authenticate("local", {
   successRedirect: "/",
@@ -84,7 +91,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('404', { title: "Members Only", user: req.user });
 });
 
 module.exports = app;
