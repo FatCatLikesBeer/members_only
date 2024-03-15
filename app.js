@@ -55,6 +55,20 @@ app.post('/', passport.authenticate("local", {
 app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
+
+// Non-exported routes
+app.get('/support', (req, res) => {
+  res.render('support', {
+    title: "Members Only",
+    user: req.user,
+  });
+});
+app.get('/about', (req, res) => {
+  res.render('about', {
+    title: "Members Only",
+    user: req.user,
+  });
+});
 app.get('/fail', (req, res) => {
   res.render('fail', {
     title: "Members Only",
@@ -65,10 +79,10 @@ app.get('/test', (req, res, next) => {
   console.log(req);
   res.send("Check the console.");
 });
-app.post('/log-in', passport.authenticate("local", {
-  successRedirect: "/",
-  failureRedirect: "/",
-}));
+// app.post('/log-in', passport.authenticate("local", {
+//   successRedirect: "/",
+//   failureRedirect: "/",
+// }));
 app.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
