@@ -9,6 +9,39 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 
+// Passport.js local login 'strategy' //
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await User.findOne({ username: username });
+      const match = await bcrypt.compare(password, user.password);
+      if (!user) {
+        return done(null, false, { message: "Incorrect username" });
+      };
+      if (!match) {
+        return done(null, false, { message: "Incorrect password" });
+      };
+      return done(null, user);
+    } catch(err) {
+      return done(err);
+    }
+  })
+);
+// The method below creates a user cookie which
+// allows them to stay logged in.
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+// The method below checks the cookie?
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch(err) {
+    done(err);
+  };
+});
+
 // Sign up GET //
 exports.signup_get = (req, res, next) => {
   res.render('signup', { title: "Members Only" });
@@ -38,12 +71,12 @@ exports.signup_post = [
         email,
         password
       ] = [
-        req.body.username,
-        req.body.email,
-        req.body.password,
-      ]
+          req.body.username,
+          req.body.email,
+          req.body.password,
+        ];
 
-      // Check for email or username collissions
+      // Check for email or username collission.
       const existingEmail = await User.findOne({ email: email }).exec();
       const existingUser = await User.findOne({ username: username }).exec();
       if (existingUser) {
@@ -53,8 +86,20 @@ exports.signup_post = [
         return res.status(400).json({ message: "An account with this username aready exists."});
       }
 
-      // Create a new user
-      res.send(username + email + password);
+      // Try to hash password first, then create a new user.
+      try {
+        bcrypt.hash(req.body.password, 16, async(err, hashedPassword) => {
+          const user = new User({
+            username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email,
+          });
+          const result = await user.save();
+          res.redirect("/");
+        })
+      } catch(err) {
+        return next(err);
+      };
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal server error' });
