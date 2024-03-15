@@ -32,6 +32,32 @@ exports.signup_post = [
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
-    res.send(req.body)
+    try {
+      const [
+        username,
+        email,
+        password
+      ] = [
+        req.body.username,
+        req.body.email,
+        req.body.password,
+      ]
+
+      // Check for email or username collissions
+      const existingEmail = await User.findOne({ email: email }).exec();
+      const existingUser = await User.findOne({ username: username }).exec();
+      if (existingUser) {
+        return res.status(400).json({ message: "An account with this email aready exists."});
+      }
+      if (existingEmail) {
+        return res.status(400).json({ message: "An account with this username aready exists."});
+      }
+
+      // Create a new user
+      res.send(username + email + password);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }),
 ];

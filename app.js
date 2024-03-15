@@ -5,12 +5,20 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config();
 
+const session = require("express-session");
+const mongoose = require("mongoose");
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const signupRouter = require('./routes/signup.js');
 const loginRouter = require('./routes/login.js');
 
 var app = express();
+
+//// ------ MongoDB Stuff ------ ////
+const mongoDB = process.env.MONGODB_URI;
+mongoose.connect(mongoDB);
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDb connection error"));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
