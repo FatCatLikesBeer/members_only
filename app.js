@@ -15,6 +15,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const signupRouter = require('./routes/signup.js');
 const loginRouter = require('./routes/login.js');
+const supportRouter = require('./routes/support.js');
 
 //// ------ MongoDB Stuff ------ ////
 const mongoose = require("mongoose");
@@ -55,14 +56,9 @@ app.post('/', passport.authenticate("local", {
 app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
+app.use('/support', supportRouter);
 
 // Non-exported routes
-app.get('/support', (req, res) => {
-  res.render('support', {
-    title: "Members Only",
-    user: req.user,
-  });
-});
 app.get('/about', (req, res) => {
   res.render('about', {
     title: "Members Only",

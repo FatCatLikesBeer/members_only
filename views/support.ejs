@@ -1,0 +1,22 @@
+<%- include('layout_head') -%>
+<div style="margin: 0px 40px;">
+  <h1>Support</h1>
+  <div style="width: 400px">
+    <form method="POST" action="/support">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="username" class="form-control" id="username" name="username" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label for="issue" class="form-label">Issue</label>
+      <textarea type="textbox" class="form-control" id="issue" name="issue" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+<%- include('layout_foot') -%>
