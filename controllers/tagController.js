@@ -6,6 +6,7 @@ const Tag = require('../models/tags.js');
 const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
+const createError = require('http-errors');
 
 exports.tag_get_list = asyncHandler(async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -22,7 +23,13 @@ exports.tag_detail = asyncHandler(async (req, res, next) => {
 });
 
 exports.tag_create_get = asyncHandler(async (req, res, next) => {
-  res.send("Tag Create GET not yet implemented");
+  if (req.isAuthenticated()) {
+    console.log("authenticated: YES");
+    res.send("Tag Create GET not yet implemented");
+  } else {
+    console.log("authenticated: NO");
+    next(createError(404));
+  }
 });
 
 exports.tag_create_post = asyncHandler(async (req, res, next) => {

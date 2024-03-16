@@ -1,0 +1,12 @@
+<%- include('layout_head') -%>
+<div class="container-sm" style="width: 400px">
+  <h2 style="margin-bottom: 24px;">Special</h2>
+  <form method="POST" action="/special">
+    <div class="mb-3">
+      <label for="upgrade" class="form-label">Upgrade Account To Administrator</label>
+      <input type="upgrade" class="form-control" id="upgrade" name="upgrade">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+<%- include('layout_foot') -%>

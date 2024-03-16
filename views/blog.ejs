@@ -1,0 +1,7 @@
+<%- include('layout_head') -%>
+<% if (user) { %>
+  <% if (user.class = "Administrator") { %>
+    <p>Admin Commands: <a href="/tag/create">Create New Tag</a></p>
+  <% } %>
+<% } %>
+<%- include('layout_foot') -%>

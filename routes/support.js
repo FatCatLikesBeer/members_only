@@ -4,6 +4,7 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const passport = require("passport");
 const nodemailer = require('nodemailer');
+const User = require('../models/users.js');
 
 /* Support GET */
 router.get('/', asyncHandler(async (req, res, next) => {
@@ -17,47 +18,51 @@ router.get('/', asyncHandler(async (req, res, next) => {
 /* Support POST */
 router.post('/', asyncHandler(async (req, res, next) => {
   const [username, email, issue] = [req.body.username, req.body.email, req.body.issue];
-
-  // Email stuff
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'itisbilly@gmail.com',
-      pass: process.env.GMAIL,
-    }
-  });
-  const mailOptions = {
-    from: "itisbilly@gmail.com",
-    to: email,
-    cc: 'itisbilly@gmail.com',
-    subject: "Members Only: Support issue",
-    text: issue,
+  const match = await User.findOne({ username }).exec();
+  if (!match) {
+    res.render('email_error', {
+      user: req.user,
+    });
+  } else {
+    // Email stuff
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'itisbilly@gmail.com',
+        pass: process.env.GMAIL,
+      }
+    });
+    const mailOptions = {
+      from: "itisbilly@gmail.com",
+      to: email,
+      cc: 'itisbilly@gmail.com',
+      subject: "Members Only: Support issue",
+      text: issue,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+        res.status(500).render('support_confirmation', {
+          title: "Members Only",
+          user: req.user,
+          username: username,
+          email: email,
+          issue: issue,
+          success: false,
+        });
+      } else {
+        console.log('Email sent:', info.response);
+        res.render('support_confirmation', {
+          title: "Members Only",
+          user: req.user,
+          username: username,
+          email: email,
+          issue: issue,
+          success: true,
+        });
+      }
+    })
   };
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-      res.status(500).render('support_confirmation', {
-        title: "Members Only",
-        user: req.user,
-        username: username,
-        email: email,
-        issue: issue,
-        success: false,
-      });
-    } else {
-      console.log('Email sent:', info.response);
-      res.render('support_confirmation', {
-        title: "Members Only",
-        user: req.user,
-        username: username,
-        email: email,
-        issue: issue,
-        success: true,
-      });
-    }
-  })
-
-  // Render page
 }));
 
 module.exports = router;

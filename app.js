@@ -16,11 +16,11 @@ const usersRouter = require('./routes/users');
 const signupRouter = require('./routes/signup.js');
 const loginRouter = require('./routes/login.js');
 const supportRouter = require('./routes/support.js');
-const tagRouter = require('./routes/tags.js');
+const specialRouter = require('./routes/specialRouter.js');
 
 //// ------ MongoDB Stuff ------ ////
 const mongoose = require("mongoose");
-const mongoDB = process.env.MONGODB_URI;
+const mongoDB = process.env.MONGODB_MEMBERS_ONLY;
 mongoose.connect(mongoDB);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDb connection error"));
@@ -50,15 +50,11 @@ app.use((req, res, next) => {
 
 //// ------ Routes ------ ////
 app.use('/', indexRouter);
-app.post('/', passport.authenticate("local", {
-  successRedirect: "/",
-  failureRedirect: "/",
-}));
 app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
-app.use('/support', supportRouter);
-app.use('/tag', tagRouter);
+//app.use('/support', supportRouter);
+app.use('/special', specialRouter);
 
 // Non-exported routes
 app.get('/about', (req, res) => {
@@ -77,10 +73,6 @@ app.get('/test', (req, res, next) => {
   console.log(req);
   res.send("Check the console.");
 });
-// app.post('/log-in', passport.authenticate("local", {
-//   successRedirect: "/",
-//   failureRedirect: "/",
-// }));
 app.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -89,6 +81,23 @@ app.get('/logout', (req, res, next) => {
     res.redirect('/');
   });
 });
+// app.post('/log-in', passport.authenticate("local", {
+//   successRedirect: "/",
+//   failureRedirect: "/",
+// }));
+// app.get('/blog', (req, res) => {
+//   if (req.isAuthenticated()) {
+//     res.render('blog', {
+//       title: "Members Only",
+//       user: req.user,
+//     });
+//   } else {
+//     res.render('blog', {
+//       title: "Members Only",
+//       user: req.user,
+//     });
+//   }
+// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -102,8 +111,15 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
+  console.log(res.locals.message);
+  console.log(res.locals.error);
   res.status(err.status || 500);
-  res.render('404', { title: "Members Only", user: req.user });
+  res.render('404', {
+    title: "Members Only",
+    user: req.user,
+    message: res.locals.message,
+    error: res.locals.error,
+  });
 });
 
 module.exports = app;

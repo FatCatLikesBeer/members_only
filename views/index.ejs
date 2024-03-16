@@ -1,8 +1,16 @@
 <%- include('layout_head') -%>
+<div style="width: 500px; margin-left: 80px;">
+<% posts.forEach( e => { %>
+  <h3><%= e.title %></h3>
+  <p>By: <%= auth ? e.user.username + " - " + e.date : 'Anon' %></p>
+  <p><%= e.content %></p>
+  <% if (admin) { %>
+    <p><a href="/post/delete/<%= e._id %>">Delete</a></p>
+  <% } %>
+  <hr>
+<% }); %>
 <% if (user) { %>
-  <p><%= currentUser.username %></p>
-  <a href='/logout'>Logout</a>
-<% } else { %>
-  <a href="/login">Login</a>
+  <a href="/post"><button class="btn btn-primary">Create Post</button></a>
 <% } %>
+</div>
 <%- include('layout_foot') -%>
