@@ -16,6 +16,7 @@ const usersRouter = require('./routes/users');
 const signupRouter = require('./routes/signup.js');
 const loginRouter = require('./routes/login.js');
 const supportRouter = require('./routes/support.js');
+const tagRouter = require('./routes/tags.js');
 
 //// ------ MongoDB Stuff ------ ////
 const mongoose = require("mongoose");
@@ -57,6 +58,7 @@ app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/support', supportRouter);
+app.use('/tag', tagRouter);
 
 // Non-exported routes
 app.get('/about', (req, res) => {
